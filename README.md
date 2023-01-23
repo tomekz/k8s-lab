@@ -1,32 +1,36 @@
 # sandbox for exploring and learning Kubernetes
 
-This repo is where I figure out how stuff works. 
-It contains code and cofiguration to setup local Kubernetes cluster for development
+This repo is where I figure out how stuff works. It contains code and configuration to setup local Kubernetes cluster for development.
 I use it as my lab to meet the following learning objectives:
 
-- Install and configure local Kubernetes cluster
-  - setup ingress controller
-- Install and access a Kubernetes web dashboard  
-- Code a bash script to capture common tasks
-  - create cluster
-  - delete cluster
-  - open dashboard
-  - load docker images
-  - deploy
-- Deploy simple services locally to the same namespace:
+- install and configure local Kubernetes cluster
+- setup ingress controller
+- install and access Kubernetes web dashboard  
+- deploy simple services locally to the same namespace:
   - HTTP server that pings redis on startup and exposes a health check endpoint
   - redis
+- code a bash script to capture common tasks
+  - create cluster
+  - delete cluster
+  - load docker images
+  - deploy
+  - open dashboard
 
 ## Install and configure local Kubernetes cluster 
 
-create kind cluster 
+`create` command:
+- creates kind cluster using the `kind-$name.yaml` config file
+- deploys NGINX ingress controller
+
+
 ```shell
-./build.sh create lab-1
+./build.sh create [name]
 ```
 
-delete kind cluster 
+`delete` deletes kind cluster with specified [name]
+
 ```shell
-./build.sh delete lab-1
+./build.sh delete [name]
 ```
 
 

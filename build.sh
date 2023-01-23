@@ -74,7 +74,7 @@ delete() {
     local cluster=${1}
     printf "Do you want to completely delete cluster '$cluster'? "
     read response
-    [[ ! ${response,,} =~ ^y(es)? ]] && echo "Fine. Cancelling." && exit 0
+    [[ ! $response =~ ^y(es)? ]] && echo "Fine. Cancelling." && exit 0
     kind delete cluster --name "$cluster"
 }
 
@@ -145,7 +145,8 @@ image() {
 }
 
 deploy() {
-    exec kubectl apply -f deploy.yaml
+    local cluster=${1}
+    exec kubectl apply -f "k8s/${cluster}.yaml"
 }
 
 # ------------------------ complete -C foo foo -----------------------
