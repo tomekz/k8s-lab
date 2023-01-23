@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab-1
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: go-test-app-configmap
+  namespace: lab-1
+data:
+  redis_host: redis-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-test-app
+  namespace: lab-1
+  labels:
+    app: go-test-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-test-app
+  template:
+    metadata:
+      labels:
+        app: go-test-app
+    spec:
+      containers:
+      - name: go-test-app 
+        image: go-test-app:0.0.1
+        env:
+        - name: REDIS_HOST
+          valueFrom: 
+            configMapKeyRef:
+              name: go-test-app-configmap
+              key: redis_host
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-test-app-service
+  namespace: lab-1
+spec:
+  selector:
+    app: go-test-app 
+  ports:
+  - port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  namespace: lab-1
+  labels:
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: lab-1
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: go-test-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: /foo(/|$)(.*)
+        backend:
+          service:
+            name: go-test-app-service
+            port:
+              number: 8080
+  
+
+
