@@ -138,15 +138,22 @@ EOM
 EOM
 }
 
-image() {
-    docker pull rwxrob/httphey
-    docker tag rwxrob/httphey localhost:5000/httphey:1.0
-    docker push localhost:5000/httphey:1.0
-}
+# image() {
+#     docker pull rwxrob/httphey
+#     docker tag rwxrob/httphey localhost:5000/httphey:1.0
+#     docker push localhost:5000/httphey:1.0
+# }
 
 deploy() {
     local cluster=${1}
     exec kubectl apply -f "k8s/${cluster}.yaml"
+}
+
+image() {
+    local image=${1}
+    local cluster=${2}
+    echo "Loading $image to $cluster cluster"
+    exec kind load docker-image "$image" --name "$cluster"
 }
 
 # ------------------------ complete -C foo foo -----------------------

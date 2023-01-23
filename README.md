@@ -33,5 +33,10 @@ I use it as my lab to meet the following learning objectives:
 ./build.sh delete [name]
 ```
 
+`image` loads [image] to [cluster] cluster 
+
+```shell
+./build.sh image [image] [cluster]
+```
 
 

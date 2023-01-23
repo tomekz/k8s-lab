@@ -6,7 +6,7 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: go-test-app-configmap
+  name: my-app-configmap
   namespace: lab-1
 data:
   redis_host: redis-service
@@ -14,39 +14,39 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-test-app
+  name: my-app
   namespace: lab-1
   labels:
-    app: go-test-app
+    app: my-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: go-test-app
+      app: my-app
   template:
     metadata:
       labels:
-        app: go-test-app
+        app: my-app
     spec:
       containers:
-      - name: go-test-app 
-        image: go-test-app:0.0.1
+      - name: my-app 
+        image: my-app:0.0.1
         env:
         - name: REDIS_HOST
           valueFrom: 
             configMapKeyRef:
-              name: go-test-app-configmap
+              name: my-app-configmap
               key: redis_host
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: go-test-app-service
+  name: my-app-service
   namespace: lab-1
 spec:
   selector:
-    app: go-test-app 
+    app: my-app 
   ports:
   - port: 8080
 ---
@@ -88,7 +88,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: go-test-app-ingress
+  name: my-app-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
@@ -99,7 +99,7 @@ spec:
         path: /foo(/|$)(.*)
         backend:
           service:
-            name: go-test-app-service
+            name: my-app-service
             port:
               number: 8080
   
