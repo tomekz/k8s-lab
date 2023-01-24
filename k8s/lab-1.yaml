@@ -99,7 +99,7 @@ spec:
   - http:
       paths:
       - pathType: Prefix
-        path: /foo(/|$)(.*)
+        path: /app(/|$)(.*)
         backend:
           service:
             name: my-app-service

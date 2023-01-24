@@ -3,9 +3,10 @@
 This repo is where I figure out how stuff works. It contains code and configuration to setup local Kubernetes cluster for development.
 I use it as my lab to meet the following learning objectives:
 
-- install and configure local Kubernetes cluster
-- setup ingress controller
-- install and access Kubernetes web dashboard  
+- install and configure local Kubernetes cluster with [kind](https://kind.sigs.k8s.io/)
+- setup ingress controller to manage external access to the apps inside the cluster
+  - use NGINX ingress controller
+  - configure ingress rule to route to sample http app running inside the cluster 
 - deploy simple services locally to the same namespace:
   - HTTP server that pings redis on startup and exposes a health check endpoint
   - redis
@@ -16,6 +17,7 @@ I use it as my lab to meet the following learning objectives:
   - deploy
   - open dashboard
 - deploy prometheus server and prometheus UI
+- install and access Kubernetes web dashboard  
 
 ## Install and configure local Kubernetes cluster 
 
@@ -47,5 +49,43 @@ I use it as my lab to meet the following learning objectives:
 ./build.sh deploy [cluster]
 ```
 
-
 where [cluster] is e.g "lab-1" and [image] "my-app:0.0.1"
+
+finally you should be able to reach the app from outside of the cluster 
+
+```sh
+curl localhost/app
+
+//output
+Status: Redis connection successful , REDIS_HOST: redis-service
+```
+
+## setup ingress controller 
+
+To allow external access to services running inside the cluster NGINX ingress controller was deployed.
+The following ingress rule was defined that routes to the sample http app running inside the cluster
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app-ingress
+  namespace: lab-1
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: /app(/|$)(.*)
+        backend:
+          service:
+            name: my-app-service
+            port:
+              number: 8080
+
+```
+
+
+
