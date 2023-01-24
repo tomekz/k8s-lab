@@ -29,11 +29,13 @@ spec:
         app: my-app
     spec:
       containers:
-      - name: my-app 
+      - name: my-app
         image: my-app:0.0.1
+        ports:
+        - containerPort: 8080
         env:
         - name: REDIS_HOST
-          valueFrom: 
+          valueFrom:
             configMapKeyRef:
               name: my-app-configmap
               key: redis_host
@@ -48,7 +50,7 @@ spec:
   selector:
     app: my-app 
   ports:
-  - port: 8080
+    - port: 8080
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -89,6 +91,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: my-app-ingress
+  namespace: lab-1
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:

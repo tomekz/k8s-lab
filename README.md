@@ -15,6 +15,7 @@ I use it as my lab to meet the following learning objectives:
   - load docker images
   - deploy
   - open dashboard
+- deploy prometheus server and prometheus UI
 
 ## Install and configure local Kubernetes cluster 
 
@@ -40,3 +41,11 @@ I use it as my lab to meet the following learning objectives:
 ```
 
 
+`deploy` creates/updates resources to a [cluster] as specified in the "k8s/[cluster].yaml" config file 
+
+```shell
+./build.sh deploy [cluster]
+```
+
+
+where [cluster] is e.g "lab-1" and [image] "my-app:0.0.1"
