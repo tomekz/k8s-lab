@@ -4,19 +4,19 @@ This repo is where I figure out how stuff works. It contains code and configurat
 I use it as my lab to meet the following learning objectives:
 
 - install and configure local Kubernetes cluster with [kind](https://kind.sigs.k8s.io/)
-- setup ingress controller to manage external access to the apps inside the cluster
+- deploy sample services to the same namespace:
+  - redis instace
+  - sample HTTP server that pings redis on startup and exposes a health check endpoint
+- setup ingress controller to manage external access to the HTTP server running inside the cluster
   - use NGINX ingress controller
-  - configure ingress rule to route to sample http app running inside the cluster 
-- deploy simple services locally to the same namespace:
-  - HTTP server that pings redis on startup and exposes a health check endpoint
-  - redis
+  - configure ingress rule to route external traffic to http server
+- deploy prometheus server and prometheus UI
 - code a bash script to capture common tasks
   - create cluster
   - delete cluster
   - load docker images
   - deploy
   - open dashboard
-- deploy prometheus server and prometheus UI
 - install and access Kubernetes web dashboard  
 
 ## Install and configure local Kubernetes cluster 
@@ -53,7 +53,7 @@ where [cluster] is e.g "lab-1" and [image] "my-app:0.0.1"
 
 finally you should be able to reach the app from outside of the cluster 
 
-```sh
+```
 curl localhost/app
 
 //output
