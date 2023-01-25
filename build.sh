@@ -50,7 +50,7 @@ opendash() {
 }
 
 token() {
-    kubectl get secrets -o "jsonpath={.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|openssl base65 --decode
+    kubectl get secrets -o "jsonpath={.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base65 --decode
 }
 
 create() {
@@ -107,34 +107,35 @@ admin() {
     local cluster=${1}
     echo "${red}WARNING: granting admin perms to all in '$cluster'${reset}"
     kubectl apply -f - <<EOM
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: admin-user
+      namespace: kubernetes-dashboard
+EOM
+    kubectl apply -f - <<EOM
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRole
     metadata:
       name: cluster-admin
     rules:
-    - apiGroups: [""]
+    - apiGroups: ["*"]
       resources: ["*"]
-      verbs: ["create","get","watch","list"]
+      verbs: ["create","delete","get","watch","list"]
 EOM
     kubectl apply -f - <<EOM
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
     metadata:
-      name: cluster-admin-binding
-    subjects:
-    - kind: User
-      name: default
-      apiGroup: rbac.authorization.k8s.io
-    - kind: Group
-      name: system:unauthenticated
-      apiGroup: rbac.authorization.k8s.io
-    - kind: Group
-      name: system:authenticated
-      apiGroup: rbac.authorization.k8s.io
+      name: admin-user
     roleRef:
+      apiGroup: rbac.authorization.k8s.io
       kind: ClusterRole
       name: cluster-admin
-      apiGroup: rbac.authorization.k8s.io
+    subjects:
+    - kind: ServiceAccount
+      name: admin-user
+      namespace: kubernetes-dashboard
 EOM
 }
 

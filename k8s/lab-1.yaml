@@ -55,7 +55,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-deployment
+  name: redis
   namespace: lab-1
   labels:
     app: redis
@@ -105,6 +105,3 @@ spec:
             name: my-app-service
             port:
               number: 8080
-  
-
-

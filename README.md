@@ -22,7 +22,7 @@ I use it as my lab to meet the following learning objectives:
 ## install and configure local Kubernetes cluster 
 
 `create` command:
-- creates kind cluster using the `kind-$name.yaml` config file
+- creates kind cluster using the `kind-[name].yaml` config file
 - deploys NGINX ingress controller
 
 ```shell
@@ -45,7 +45,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/a
 
 Accessing the dashboard UI  
 
-- grant admin permissions to all cluster users 
+- create service account with admin permissions to the entire cluster 
 
 ```shell
 ./build.sh admin [cluster]
@@ -64,10 +64,11 @@ kubectl proxy
 Kubectl will make Dashboard available at http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 
 - login to Dashboard using a bearer token tied to a user. You can use default user
-To find the token we can use to log in. Execute the following command:
+To find the token we can use to log in execute the following command:
 ```
-kubectl -n kubernetes-dashboard create token default
+kubectl -n kubernetes-dashboard create token admin-user
 ```
+
 ## deploy sample services to the same namespace:
 
 `image` loads [image] to [cluster] cluster 
@@ -75,7 +76,6 @@ kubectl -n kubernetes-dashboard create token default
 ```shell
 ./build.sh image [image] [cluster]
 ```
-
 
 `deploy` creates/updates resources to a [cluster] as specified in the "k8s/[cluster].yaml" config file 
 
