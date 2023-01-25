@@ -31,7 +31,7 @@ usage() {
     cmds="${COMMANDS[@]}"
     cmds="[${cmds// /|}]"
     echo
-    echo "${black}usage: ${yellow}${0##*/} ${reset}$cmds"
+    echo "${black}usage: ${yellow}${0##*/} ${magenta}$cmds"
     echo
 }
 
@@ -50,7 +50,7 @@ opendash() {
 }
 
 token() {
-    kubectl get secrets -o "jsonpath={.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base65 --decode
+    kubectl get secrets -o "jsonpath={.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|openssl base65 --decode
 }
 
 create() {
@@ -104,7 +104,7 @@ checkreg() {
 }
 
 admin() {
-    local cluster=${1:-kind}
+    local cluster=${1}
     echo "${red}WARNING: granting admin perms to all in '$cluster'${reset}"
     kubectl apply -f - <<EOM
     apiVersion: rbac.authorization.k8s.io/v1
