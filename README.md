@@ -71,9 +71,8 @@ kubectl -n kubernetes-dashboard create token admin-user
 
 ## deploy sample services to the same namespace:
 
-[cluster resources](lab-1-cluster.png)
+![cluster resources](lab-1-cluster.png)
 
-lab-1 cluster resources
 
 `image` loads [image] to [cluster] cluster 
 
