@@ -5,13 +5,13 @@ I use it as my lab to meet the following learning objectives:
 
 - install and configure local Kubernetes cluster with [kind](https://kind.sigs.k8s.io/)
 - install and access Kubernetes web dashboard  
+- deploy prometheus server and prometheus UI
 - deploy sample services to the same namespace:
   - redis instace
   - sample HTTP server that pings redis on startup and exposes health status for the index route
 - setup ingress controller to manage external access to the HTTP server running inside the cluster
   - use NGINX ingress controller
   - configure ingress rule to route external traffic to http server
-- deploy prometheus server and prometheus UI
 - code a bash script to capture common tasks
   - create cluster
   - delete cluster
@@ -68,6 +68,26 @@ To find the token we can use to log in execute the following command:
 ```
 kubectl -n kubernetes-dashboard create token admin-user
 ```
+
+## deploy prometheus server and prometheus UI
+
+```
+helm upgrade --install --wait --timeout 15m \
+  --namespace monitoring --create-namespace \
+  --repo https://prometheus-community.github.io/helm-charts \
+  kube-prometheus-stack kube-prometheus-stack --values - <<EOF
+kubeEtcd:
+  service:
+    targetPort: 2381
+EOF
+```
+To connect to the running Prometheus instance, we need to port-forward to the kube-prometheus-stack-prometheus service on port 9090:
+
+```
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
+```
+
+and access the Prometheus UI at http://localhost:9090
 
 ## deploy sample services to the same namespace:
 

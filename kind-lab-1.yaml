@@ -8,7 +8,26 @@ nodes:
     nodeRegistration:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true"
-  # allow the local host to make requests to ingress controller over ports 80/443
+  - |-
+    kind: ClusterConfiguration
+    # configure controller-manager bind address
+    controllerManager:
+      extraArgs:
+        bind-address: 0.0.0.0
+    # configure etcd metrics listen address
+    etcd:
+      local:
+        extraArgs:
+          listen-metrics-urls: http://0.0.0.0:2381
+    # configure scheduler bind address
+    scheduler:
+      extraArgs:
+        bind-address: 0.0.0.0
+  - |-
+    kind: KubeProxyConfiguration
+    # configure proxy metrics bind address
+    metricsBindAddress: 0.0.0.0
+  # allow the local host to make requests to ingress controller over ports 80/4430
   extraPortMappings:
   - containerPort: 80
     hostPort: 80
