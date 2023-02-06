@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 var REDIS_HOST = os.Getenv("REDIS_HOST")
@@ -17,11 +20,12 @@ func main() {
 		DB:       0,  // use default DB
 	})
 
-	http.HandleFunc("/", healthCheckHandler(healthCheck(client)))
+	router := mux.NewRouter()
+	router.HandleFunc("/", healthCheckHandler(healthCheck(client)))
+	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(fmt.Sprintf("Error starting server: %s", err))
-	}
+	log.Printf("server is listening at %s", "8080")
+	log.Fatal(http.ListenAndServe(":8080", loggedRouter))
 }
 
 func healthCheck(client *redis.Client) string {
@@ -38,7 +42,7 @@ func healthCheck(client *redis.Client) string {
 
 func healthCheckHandler(status string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, err := w.Write([]byte(fmt.Sprintf("Status: %s, REDIS_HOST: %s", status, REDIS_HOST)))
+		_, err := w.Write([]byte(fmt.Sprintf("Status: %s REDIS_HOST: %s", status, REDIS_HOST)))
 		if err != nil {
 			fmt.Println("Error writing response: ", err)
 		}
